@@ -1,0 +1,198 @@
+import React, { useState } from "react";
+import "./app.css";
+import { Todo } from "./components/Todo";
+
+export const App = () => {
+  const [ToDo, setToDo] = useState([]);
+  const [newTask, setNewTask] = useState("");
+
+  // handles
+  const handleNewToDo = (event) => {
+    let listModel = {
+      id: ToDo.length === 0 ? 1 : ToDo[ToDo.length - 1].id + 1,
+      message: event.target.value,
+      completed: false,
+    };
+    setNewTask(listModel);
+  };
+
+  const handleSetToDo = (event) => {
+    event.preventDefault();
+    setToDo([...ToDo, newTask]);
+  };
+
+  const handleComplete = (data) => {
+    // console.log(ToDo[data]);
+  };
+
+  const handleDelete = (id) => {
+    setToDo(ToDo.filter((key) => key.id !== id));
+  };
+
+  // handles
+
+  return (
+    <div className="div">
+      {/* head */}
+      <h2 className="heading">ToDo List.</h2>
+      {/* input */}
+      <div className="taskRowi">
+        <input className="inpField" type="text" onChange={handleNewToDo} />
+        <button className="trBTN" type="submit" onClick={handleSetToDo}>
+          ADD
+        </button>
+      </div>
+      {/* newtask */}
+      <div className="taskRow">
+        {ToDo.map((data, key) => {
+          return (
+            <Todo
+              key={key}
+              data={data}
+              handleDelete={handleDelete}
+              handleComplete={handleComplete}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+
+// self //
+import React, { useState, useRef } from "react";
+
+function App() {
+  const [todo, setTodo] = useState([]);
+  const [newTodo, setNewTodo] = useState("");
+
+  // get into place
+  const handleTodoData = (event) => {
+    let dataSchema = {
+      id: todo.length === 0 ? 1 : todo[todo.length - 1]?.id + 1,
+      message: event?.target?.value,
+      completed: false,
+    };
+    setNewTodo(dataSchema);
+  };
+
+  const handleSubmit = () => {
+    setTodo([...todo, newTodo]);
+  };
+
+  const handleDelete = (id) => {
+    setTodo(todo.filter((key) => id !== key?.id));
+  };
+
+  const handleCompleted = (id) => {
+    setTodo(
+      todo.map((key) => {
+        if (key?.id === id) {
+          return { ...key, completed: !key?.completed };
+        } else {
+          return key;
+        }
+      })
+    );
+  };
+
+  return (
+    <div>
+      <div>
+        <input type="text" onChange={handleTodoData} />
+        <button onClick={handleSubmit}>ADD</button>
+      </div>
+      {todo.map((data, key) => {
+        return (
+          <div key={key}>
+            <p
+              style={{
+                textDecoration:
+                  data?.completed === true ? "line-through" : "none",
+              }}
+            >
+              {data?.message}
+            </p>
+            <button onClick={() => handleDelete(data?.id)}>X</button>
+            <button onClick={() => handleCompleted(data?.id)}>completed</button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default App;
+
+
+// the final version without css
+
+import React, { useRef, useState } from "react";
+import date from "date-and-time";
+
+function App() {
+  const [todo, setTodo] = useState([]);
+  let inputRef = useRef();
+
+  const handleSubmit = () => {
+    let value = inputRef?.current?.value;
+
+    let time1 = date?.compile("YYYY/MM/DD-HH:mm:ss");
+    let time = date.format(new Date(), time1);
+    // console.log(value);
+    let model = {
+      msg: value,
+      id: todo.length === 0 ? 1 : todo[todo.length - 1]?.id + 1,
+      status: false,
+      createdAt: time,
+    };
+    setTodo([...todo, model]);
+  };
+
+  const handleDelete = (id) => {
+    setTodo(todo.filter((key) => key?.id !== id));
+  };
+
+  const handleCompleted = (id) => {
+    setTodo(
+      todo.map((data, key) => {
+        if (data?.id === id) {
+          return { ...data, status: !data?.status };
+        } else {
+          return data;
+        }
+      })
+    );
+    console.log(todo);
+  };
+
+  return (
+    <div>
+      <div>
+        <input type="text" ref={inputRef} />
+        <button onClick={handleSubmit}>add</button>
+      </div>
+      <div>
+        {todo?.map((data, key) => {
+          return (
+            <div key={key}>
+              <p
+                style={{
+                  textDecoration:
+                    data?.status === true ? "line-through" : "none",
+                }}
+              >
+                {data?.msg}
+              </p>
+              <button onClick={() => handleDelete(data?.id)}>X</button>
+              <button onClick={() => handleCompleted(data?.id)}>D</button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export default App;
